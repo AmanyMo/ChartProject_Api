@@ -18,7 +18,8 @@ namespace ChartProject_Api.Controllers
         public async Task<ActionResult<IEnumerable<TechnicalDataOrange>>> GetAll()
         {
            IEnumerable<TechnicalDataOrange> customers =  await _customer.GetAllCustomers();
-            var retCustomers= customers.Skip(0).Take(20);
+           //var n=  customers.GroupBy(c => c.Service).Select(s=>s.Count(s=>s.Service));
+            var retCustomers= customers.Skip(0).Take(60);
             if (customers.Count()>0)
             {
 
@@ -34,7 +35,7 @@ namespace ChartProject_Api.Controllers
             var customers = await _customer.GetAllCustomersExpired();
             if (customers.Count()>0)
             {
-                return Ok(customers.Take(20));
+                return Ok(customers.Take(40));
             }
             else
             return NoContent();
@@ -46,7 +47,7 @@ namespace ChartProject_Api.Controllers
             var customers = await _customer.GetAllCustomersWillExpired();
             if (customers.Count() > 0)
             {
-                return Ok(customers.Take(20));
+                return Ok(customers.Take(50));
             }
             else
                 return NoContent();
@@ -54,7 +55,7 @@ namespace ChartProject_Api.Controllers
 
 
         [HttpGet("countperservice")]
-        public async Task<ActionResult<int>> GetCustomerCount(string service)
+        public async Task<ActionResult<int>> GetCustomerCountPerService(string service)
         {
             var customersCount = await _customer.GetCustomersCountByService(service);
             if (customersCount > 0)
@@ -71,6 +72,24 @@ namespace ChartProject_Api.Controllers
             if (customersCount > 0)
             {
                 return Ok(customersCount);
+            }
+            else
+                return NoContent();
+        }
+
+        [HttpGet("countpereachservice")]
+        public async Task<ActionResult<TechnicalDataOrange>> GetCustomerCountPerEachService()
+        {
+            IEnumerable<TechnicalDataOrange> customersGroup = await _customer.GetAllCustomers();
+            var groupCustomers = customersGroup.GroupBy((c)=>c.Service)
+                .Select(a=> new
+                {
+                    Service=a.Key,
+                    totalNumber=a.Count()
+                }).ToArray();
+            if (groupCustomers.Length > 0)
+            {
+                return Ok(groupCustomers);
             }
             else
                 return NoContent();
