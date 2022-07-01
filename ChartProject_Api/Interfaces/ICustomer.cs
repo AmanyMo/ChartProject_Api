@@ -7,6 +7,7 @@
         public Task<IEnumerable<TechnicalDataOrange>> GetAllCustomersWillExpired();
         public Task<int> GetCustomersCountByService(string serviceType);
         public Task<int> GetCustomersCountPerMonthPerYear(int month,int year);
+        public Task<IEnumerable<TechnicalDataOrange>> GetCustomersCountPerYear(int year);
 
 
     }

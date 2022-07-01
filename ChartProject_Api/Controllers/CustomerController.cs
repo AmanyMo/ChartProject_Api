@@ -76,6 +76,25 @@ namespace ChartProject_Api.Controllers
             else
                 return NoContent();
         }
+        [HttpGet("getperyear")]
+        public async Task<ActionResult<int>> GetCustomerCountPeryear(int year)
+        {
+            IEnumerable<TechnicalDataOrange> customersCount = await _customer.GetCustomersCountPerYear(year);
+            if (customersCount.Count() > 0)
+            {
+              var GroupCustomerPerYear=  customersCount.GroupBy(c => c.ContractDate.Value.Month).Select(c=>
+                new
+                {
+                   month= c.Key,
+                   count=c.Count()
+                }).ToArray();
+                if (GroupCustomerPerYear.Length>0)
+                {
+                    return Ok(GroupCustomerPerYear);
+                }
+            }
+                return NoContent();
+        }
 
         [HttpGet("countpereachservice")]
         public async Task<ActionResult<TechnicalDataOrange>> GetCustomerCountPerEachService()
@@ -84,8 +103,8 @@ namespace ChartProject_Api.Controllers
             var groupCustomers = customersGroup.GroupBy((c)=>c.Service)
                 .Select(a=> new
                 {
-                    Service=a.Key,
-                    totalNumber=a.Count()
+                    serviceName=a.Key,
+                    count=a.Count()
                 }).ToArray();
             if (groupCustomers.Length > 0)
             {

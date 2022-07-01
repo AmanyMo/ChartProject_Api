@@ -43,5 +43,12 @@ namespace ChartProject_Api.Repository
                     s.ContractDate.Value.Month == month && s.ContractDate.Value.Year == year).CountAsync();
 
         }
+
+        public async Task<IEnumerable<TechnicalDataOrange>> GetCustomersCountPerYear(int year)
+        {
+            var customers = await _context.TechnicalDataOranges.
+                Where(c=> c.ContractDate.Value.Year==year).ToListAsync();
+              return customers;
+        }
     }
 }
